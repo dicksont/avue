@@ -1,0 +1,27 @@
+{
+  "name": "avue",
+  "main": "index.js",
+  "version": "0.0.0",
+  "homepage": "https://github.com/dicksont/avue",
+  "authors": [
+    "Dickson Tam <dicksont650@gmail.com>"
+  ],
+  "description": "JavaScript  accessors/bindings for HTML element states",
+  "keywords": [
+    "javascript",
+    "accessor",
+    "binding",
+    "html",
+    "element",
+    "view",
+    "model"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

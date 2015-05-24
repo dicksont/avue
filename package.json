@@ -1,0 +1,27 @@
+{
+  "name": "avue",
+  "version": "0.0.0",
+  "description": "Accessors/bindings for HTML element states",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dicksont/avue.git"
+  },
+  "keywords": [
+    "html",
+    "element",
+    "view",
+    "binding",
+    "javascript",
+    "model"
+  ],
+  "author": "Dickson Tam <dicksont650@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dicksont/avue/issues"
+  },
+  "homepage": "https://github.com/dicksont/avue#readme"
+}
