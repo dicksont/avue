@@ -1,5 +1,5 @@
 {
-  "name": "avue",
+  "name": "velm",
   "version": "0.0.0",
   "description": "Accessors/bindings for HTML element states",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dicksont/avue.git"
+    "url": "git+https://github.com/dicksont/velm.git"
   },
   "keywords": [
     "html",
@@ -21,7 +21,7 @@
   "author": "Dickson Tam <dicksont650@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dicksont/avue/issues"
+    "url": "https://github.com/dicksont/velm/issues"
   },
-  "homepage": "https://github.com/dicksont/avue#readme"
+  "homepage": "https://github.com/dicksont/velm#readme"
 }
