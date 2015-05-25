@@ -1,22 +1,22 @@
-### avue
+### velm
 ## Introduction
 
-Avue allows developers to attach JavaScript accessors/bindings on HTML view element state to JavaScript properties. These bindings have the following properties:
+Velm allows developers to attach JavaScript accessors/bindings on HTML view element state to JavaScript properties. These bindings have the following properties:
 
-- **View-backed**. With most binding libraries, custom JavaScript objects serve as the models for the binding. Avue is different. Bindings in avue are backed by directly by state stored in the view.
-- **Two-way directionality.** Bindings are two-way, because avue creates both the getter and the setter for you.
+- **View-backed**. With most binding libraries, custom JavaScript objects serve as the models for the binding. Velm is different. Bindings in velm are backed by directly by state stored in the view.
+- **Two-way directionality.** Bindings are two-way, because velm creates both the getter and the setter for you.
 - **Flexible.** A binding can be created to link any supported HTML element to any JavaScript object.
 - **Consistent.** Values returned by bindings are always consistent with the state in the view.
 - **Light-weight.** Bindings do not incur a maintenance penalty.
 
 ### Alternatives
 
-Avue is not for everyone. Some features are not present in Avue. For example, Avue does not have:
+Velm is not for everyone. Some features are not present in Velm. For example, Velm does not have:
 
-- **State change notification**. Avue does not provide mechanisms to notify or respond to state changes. Developers are encouraged to utilize existing DOM event notification or use jQuery callbacks.
-- **Templating**. Avue does not provide templating.
+- **State change notification**. Velm does not provide mechanisms to notify or respond to state changes. Developers are encouraged to utilize existing DOM event notification or use jQuery callbacks.
+- **Templating**. Velm does not provide templating.
 
-If Avue does not meet your needs, then you might want to consider other binding libraries. These will provide a slightly different paradigm that might be better suited for your project. Fully baked binding libraries include:
+If Velm does not meet your needs, then you might want to consider other binding libraries. These will provide a slightly different paradigm that might be better suited for your project. Fully baked binding libraries include:
 
 - Angular.js
 - Rivets.js
@@ -139,7 +139,7 @@ Value      | Truthy?
 *          | yes
 
 ## Specialized bindings
-What we've talked about prior, are standard bindings. Avue also has specialized bindings for specialized elements.
+What we've talked about prior, are standard bindings. Velm also has specialized bindings for specialized elements.
 
 ### Select elements
 
