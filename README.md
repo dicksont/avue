@@ -1,6 +1,8 @@
 ### velm
 ## Introduction
 
+[![Build Status](https://travis-ci.org/dicksont/velm.svg?branch=master)](https://travis-ci.org/dicksont/velm) [![npm version](https://badge.fury.io/js/velm.svg)](http://badge.fury.io/js/velm) [![Bower version](https://badge.fury.io/bo/velm.svg)](http://badge.fury.io/bo/velm)
+
 Velm allows developers to attach JavaScript accessors/bindings on HTML view element state to JavaScript properties. These bindings have the following properties:
 
 - **View-backed**. With most binding libraries, custom JavaScript objects serve as the models for the binding. Velm is different. Bindings in velm are backed by directly by state stored in the view.
@@ -8,6 +10,8 @@ Velm allows developers to attach JavaScript accessors/bindings on HTML view elem
 - **Flexible.** A binding can be created to link any supported HTML element to any JavaScript object.
 - **Consistent.** Values returned by bindings are always consistent with the state in the view.
 - **Light-weight.** Bindings do not incur a maintenance penalty.
+
+[License](LICENSE.md)
 
 ### Alternatives
 
