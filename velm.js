@@ -23,11 +23,23 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-
-(function(property) {
+ (function(factory) {
+  if (typeof module !== 'undefined' && module && module.exports) { // Node.js & CommonJS
+    module.exports = function(window, property) {
+      return factory(window,property);
+    }
+  } else if (typeof define === 'function' && define.amd) { // Require.js & AMD
+    define('velm', [], function(jquery, afnum) {
+      return factory(window);
+    });
+  } else { // Browser
+    factory(window);
+  }
+})(function(window, property) {
   var property = property || 'bind';
   var rclass = /^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/;
   var rattrib = /^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/;
+  var document = window.document;
 
   function truthy(str) {
     if (str == null) return false;
@@ -61,6 +73,67 @@
       throw new Error('Attribute parameter is an empty string.');
     } else if (attribute.match(rattrib)){
       throw new Error('Attribute parameter is not valid attribute name.');
+    }
+  }
+
+  function regExp(className) {
+    return new RegExp('(^|\\s+)' + className + '(?=($|\\s+))');
+  }
+
+
+  function hasClass(el, className) {
+    if (el.classList) {
+      return el.classList.contains(className);
+    } else if (el.className) {
+      return !!~el.className.search(regExp(className));
+    } else {
+      throw new Error('Element ' + el + ' does not have classList or className properties.');
+    }
+  }
+
+  function addClass(el, className) {
+    if (hasClass(el, className)) return;
+
+    if (el.classList) {
+      el.classList.add(className);
+    } else if (el.className) {
+      el.className = el.className + ((el.className.trim().length > 0)? " " :"") + className;
+    } else {
+      throw new Error('Element ' + el + ' does not have classList or className properties.');
+    }
+  }
+
+  function removeClass(el, className) {
+    if (!hasClass(el, className)) return;
+
+    if (el.classList) {
+      el.classList.remove(className);
+    } else if (el.className) {
+      el.className = el.className.trim().replace(regExp(className), '');
+    } else {
+      throw new Error('Element ' + el + ' does not have classList or className properties.');
+    }
+  }
+
+  function classList(el, arr) {
+    if (arr && el.classList) { /*  New Setter */
+      var last = el.classList.length - 1;
+      for (var i=last; i >= 0; i--) {
+        el.classList.remove(el.classList[i]);
+      }
+
+      for (var i=0; i < arr.length; i++) {
+        el.classList.add(arr[i]);
+      }
+
+    } else if (arr && el.className) { /*  Old Setter */
+        el.className = arr.join(' ');
+    } else if (el.classList) { /* New Getter */
+        return Array.prototype.slice.call(el.classList);
+    } else if (el.className) { /* Old Getter */
+        return el.className.split(/\s/);
+    } else {
+      throw new Error('Element ' + el + ' does not have classList or className properties.');
     }
   }
 
@@ -112,41 +185,34 @@
             break;
           case 'classList':
             getter = function() {
-              return Array.prototype.slice.call(el.classList);
+              return classList(el);
             }
             setter = function(arr) {
-              var last = el.classList.length - 1;
-              for (var i=last; i >= 0; i--) {
-                el.classList.remove(el.classList[i]);
-              }
-
-              for (var i=0; i < arr.length; i++) {
-                el.classList.add(arr[i]);
-              }
+              classList(el, arr);
             }
             break;
           case 'hasClass':
             getter = function() {
-              return el.classList.contains(opts[1]);
+              return hasClass(el, opts[1]);
             };
             setter = function(boolean) {
               if (boolean) {
-                el.classList.add(opts[1]);
+                addClass(el, opts[1]);
               } else {
-                el.classList.remove(opts[1]);
+                removeClass(el, opts[1]);
               }
 
             }
             break;
           case 'noClass':
             getter = function() {
-              return !el.classList.contains(opts[1]);
+              return !hasClass(el, opts[1]);
             };
             setter = function(boolean) {
               if (!boolean) {
-                el.classList.add(opts[1]);
+                addClass(el, opts[1]);
               } else {
-                el.classList.remove(opts[1]);
+                removeClass(el, opts[1]);
               }
             }
             break;
@@ -192,7 +258,7 @@
               return el.value;
             };
             setter = function(text) {
-              
+
               el.value = text;
             };
             break;
@@ -339,8 +405,19 @@
     }
   }
 
-  attachBindToElementPrototype(HTMLElement, property);
-  attachBindToElementPrototype(HTMLInputElement, property);
-  attachBindToElementPrototype(HTMLSelectElement, property);
-  attachBindToElementPrototype(HTMLTextAreaElement, property);
-})();
+  var ctors = ['HTMLElement', 'HTMLInputElement', 'HTMLSelectElement', 'HTMLTextAreaElement'];
+
+  ctors.map(function(ctor) {
+    if (!window.hasOwnProperty(ctor)) {
+      throw new Error(ctor + ' not found.');
+    }
+
+    attachBindToElementPrototype(window[ctor], property);
+  });
+
+  var HTMLElement = window.HTMLElement;
+  var HTMLInputElement = window.HTMLInputElement;
+  var HTMLSelectElement = window.HTMLSelectElement;
+  var HTMLTextAreaElement = window.HTMLTextAreaElement;
+
+});

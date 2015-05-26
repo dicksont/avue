@@ -1,7 +1,7 @@
 {
   "name": "velm",
-  "main": "index.js",
-  "version": "0.0.1",
+  "main": "velm.js",
+  "version": "0.1.0",
   "homepage": "https://github.com/dicksont/velm",
   "authors": [
     "Dickson Tam <dicksont650@gmail.com>"
