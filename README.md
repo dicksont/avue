@@ -142,6 +142,10 @@ null       | no
 '0'        | no
 *          | yes
 
+Both *hasTruthyAttr* and *noTruthyAttr* provide setters. Their behavior is very different however. With *hasTruthyAttr*, we can assign most values to the property. Velm will do it's best to cast that value to a string before assigning to the attribute.
+
+With *noTruthyAttr*, however assignment of a value to the property will result in the attribute being assigned the 'false' string if that value is JavaScript true and the 'true' string if that value is JavaScript false.
+
 ## Specialized bindings
 What we've talked about prior, are standard bindings. Velm also has specialized bindings for specialized elements.
 
@@ -175,13 +179,15 @@ And similarly, for textareas, we can have:
 
 ### Radio elements
 
-Input elements of type radio have an additional property called *groupVAlue*. *groupValue* allows us to attach properties to value of the radio group. It would look as follows:
+Input elements of type radio have an additional property called *groupValue*. *groupValue* allows us to attach properties to value of the radio group. It would look as follows:
 
 ```javascript
     radio.bind
       .groupValue
       .to(ui, 'input');
 ```
+
+An error will be thrown if the value assigned to the property is not found in any corresponding radio button's value attribute.
 
 ### Checkbox
 
