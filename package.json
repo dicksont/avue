@@ -1,6 +1,6 @@
 {
   "name": "velm",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Accessors/bindings for HTML element states",
   "main": "index.js",
   "scripts": {
