@@ -129,13 +129,17 @@ To convert the attribute string, we trim and lowercase it, before a comparison i
 
 Value      | Truthy?
 -----------|--------
+undefined  | no
+null       | no
+''         | yes
+'undefined'| yes
+'null'     | yes
 'yes'      | yes
 'no'       | no
 'true'     | yes
 'false'    | no
-'0'        | no
 '1'        | yes
-''         | no
+'0'        | no
 *          | yes
 
 ## Specialized bindings
