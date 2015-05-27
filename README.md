@@ -11,7 +11,7 @@ Velm allows developers to attach JavaScript accessors/bindings on HTML view elem
 - **Consistent.** Values returned by bindings are always consistent with the state in the view.
 - **Light-weight.** Bindings do not incur a maintenance penalty.
 
-[License](LICENSE.md)
+[License](LICENSE.md) | [To-Do's](TODO.md)
 
 ### Alternatives
 
