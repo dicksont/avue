@@ -45,7 +45,7 @@ div.bind
   .to(ui, 'alert');
 ```
 
-This will allow use to get and set the content of *div* via *ui.content*. For example, we can now do:
+This will allow us to get and set the content of *div* via *ui.content*. For example, we can now do:
 
 ```javascript
 ui.alert = '<b>Hello world!</b>'

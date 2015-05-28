@@ -8,7 +8,7 @@ menu structures composed of div's.
 
 ## Proposed Change API
 
-Add a change method that takes in a callback. Callback will be executed when Velm detects the the value of the binding changes. Additional parameter can be used to specify type of detection: i.e. pollling or event.
+Add a change method that takes in a callback. Callback will be executed when Velm detects the the value of the binding changes. Additional parameter can be used to specify method of detection: i.e. polling or event.
 
 ```javascript
 
