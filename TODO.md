@@ -6,21 +6,21 @@ menu structures composed of div's.
 * Add support for events and notifications.
 
 
-## Proposed Change API
+## Change API Candidate A
 
 Add a change method that takes in a callback. Callback will be executed when Velm detects the the value of the binding changes. Additional parameter can be used to specify method of detection: i.e. polling or event.
 
 ```javascript
 
 
-var inputBinding = document.getElementById('div_showinput').bind
+document.getElementById('div_showinput').bind
                     .hasClass('on')
                     .to(ui.options, 'showInput')
                     .change(updateSidebar, 'polling');
 
-var keyBinding = document.getElementById('div_showkey').bind
+document.getElementById('div_showkey').bind
                     .hasClass('on')
-                    .to(ui.options, 'showInput');
+                    .to(ui.options, 'showKey');
                     .change(updateSidebar);
 
 
@@ -33,5 +33,27 @@ function updateSidebar() {
     sidebar.classList.add('off');
   }
 }
+
+```
+
+
+## Change API Candidate B
+
+```javascript
+
+showInput = velm('#div_showinput')
+  .hasClass('on')
+  .to(ui.options, 'showInput')
+
+showKey = velm('#div_showkey')
+  .hasClass('on')
+  .to(ui.options, 'showKey');
+
+sidebar = velm('#div_sidebar')
+  .noClass('off')
+  .to(ui.state, 'sidebar');
+
+sidebar.value = (showInput).or(showKey);
+sidebar.value = (showInput).and(showKey);
 
 ```
