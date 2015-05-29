@@ -41,7 +41,7 @@
     var doc = jsdom.jsdom(txt);
     var win = doc.defaultView;
 
-    require('../velm.js')(win);
+    win.velm = require('../velm.js')(win);
     module.exports = factory(qunit, win);
   } else { // Browser
     factory(QUnit, window);
@@ -51,7 +51,6 @@
 
   var document = window.document;
   var velm = window.velm;
-  var HTMLElement = window.HTMLElement;
 
 
 

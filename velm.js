@@ -41,6 +41,10 @@
   var rclass = /^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/;
   var rattrib = /^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/;
   var document = window.document;
+  var HTMLElement = window.HTMLElement;
+  var HTMLSelectElement = window.HTMLSelectElement;
+  var HTMLTextAreaElement = window.HTMLTextAreaElement;
+  var HTMLInputElement = window.HTMLInputElement;
 
   var velm = init;
 
