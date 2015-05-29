@@ -32,7 +32,6 @@ Suppose we have a blank *ui* object:
 
 ```javascript
 var ui = {}
-var div = document.getElementsByTagName('div')[0];
 ```
 
 ## Standard bindings
@@ -40,7 +39,7 @@ var div = document.getElementsByTagName('div')[0];
 On this *ui* object, we can attach a property that gives us access to the html within that *div*. The code for this very simple:
 
 ```javascript
-div.bind
+velm('#div_alert')
   .html
   .to(ui, 'alert');
 ```
@@ -61,7 +60,7 @@ console.log(ui.alert);
 Of course, we do provide it's safer cousin **.bind.text**. We can replace the previous html binding with the following:
 
 ```javascript
-div.bind
+velm('#div_alert')
   .text
   .to(ui, 'alert');
 ```
@@ -78,7 +77,7 @@ ui.alert = 'Hello world!'
 We can use the classList property to attach the class string on the element to an array of classes in the model. This is easier than it might sound. To do this, we just need to write:
 
 ```javascript
-div.bind
+velm('#div_alert')
   .classList
   .to(ui, 'look');
 ```
@@ -92,7 +91,7 @@ ui.look = [ 'btn', 'btn-default' ];
 Often times, we will be using the existence of a class just to record the switch state. With **bind.hasClass** and **bind.noClass**, we can do both with a direct and an inverse mapping. Here's the direct mapping example:
 
 ```javascript
-article.bind
+velm('button.show-date')
   .hasClass('on')
   .to(ui, 'showDate');
 ```
@@ -100,7 +99,7 @@ article.bind
 And here's the inverse mapping equivalent:
 
 ```javascript
-article.bind
+velm('button.show-date')
   .noClass('off')
   .to(ui, 'showDate');
 ```
@@ -116,17 +115,17 @@ If an element has a boolean attribute with values are like 'true' or 'false', 'y
 
 
 ```javascript
-    iframe.bind
-      .hasTruthyAttr('allowTransparency')
-      .to(ui, 'iframeTransparent');
+velm(document.getElementsByTagName('iframe')[0])
+  .hasTruthyAttr('allowTransparency')
+  .to(ui, 'iframeTransparent');
 ```
 
 And we can do the inverse with **bind.noTruthyAttr**:
 
 ```javascript
-    iframe.bind
-      .noTruthyAttr('allowTransparency')
-      .to(ui, 'iframeOpaque');
+velm(document.getElementsByTagName('iframe')[0])
+  .noTruthyAttr('allowTransparency')
+  .to(ui, 'iframeOpaque');
 ```
 
 To convert the attribute string, we trim and lowercase it, before a comparison is made. This should produce the following results:
@@ -158,9 +157,9 @@ What we've talked about prior, are standard bindings. Velm also has specialized 
 The bind property of select elements has an additional property called *selectValue*. Using this property, we can bind the value of this select element to the a boolean variable. For example:
 
 ```javascript
-    select.bind
-      .selectValue
-      .to(ui, 'color');
+velm('select.color')
+  .selectValue
+  .to(ui, 'color');
 ```
 
 ### Input elements
@@ -168,17 +167,17 @@ The bind property of select elements has an additional property called *selectVa
 Input elements of type text or password and textarea elements, have an additional property called *textValue*. We can use this property to attach variables to the text value of the input box or the textarea. For example, for input elements we can have the following:
 
 ```javascript
-    input.bind
-      .textValue
-      .to(ui, 'key');
+velm('input[name="key"]')
+  .textValue
+  .to(ui, 'key');
 ```
 
 And similarly, for textareas, we can have:
 
 ```javascript
-    textArea.bind
-      .textValue
-      .to(ui, 'message');
+velm('textArea[name="message"]')
+  .textValue
+  .to(ui, 'message');
 ```
 
 ### Radio elements
@@ -186,9 +185,9 @@ And similarly, for textareas, we can have:
 Input elements of type radio have an additional property called *groupValue*. *groupValue* allows us to attach properties to value of the radio group. It would look as follows:
 
 ```javascript
-    radio.bind
-      .groupValue
-      .to(ui, 'input');
+velm('input[type="radio"]')
+  .groupValue
+  .to(ui, 'input');
 ```
 
 An error will be thrown if the value assigned to the property is not found in any corresponding radio button's value attribute.
@@ -198,7 +197,7 @@ An error will be thrown if the value assigned to the property is not found in an
 Input elements of type checkbox have an additional property called *checked*. *checked* allows us to attach a boolean property to the checked state of the checkbox. For example:
 
 ```javascript
-    checkbox.bind
-      .checked
-      .to(ui.options, 'showKey');
+velm('input[type="checkbox"]')
+  .checked
+  .to(ui.options, 'showKey');
 ```

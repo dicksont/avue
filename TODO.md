@@ -54,6 +54,6 @@ sidebar = velm('#div_sidebar')
   .to(ui.state, 'sidebar');
 
 sidebar.value = (showInput).or(showKey);
-sidebar.value = (showInput).and(showKey);
+sidebar.value = (showInput).and(velm.not(showKey));
 
 ```

@@ -23,23 +23,56 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+
  (function(factory) {
   if (typeof module !== 'undefined' && module && module.exports) { // Node.js & CommonJS
-    module.exports = function(window, property) {
-      return factory(window,property);
+    module.exports = function(window) {
+      return factory(window);
     }
   } else if (typeof define === 'function' && define.amd) { // Require.js & AMD
     define('velm', [], function(jquery, afnum) {
-      return factory(window);
+      window.velm = factory(window);
+      return window.velm;
     });
   } else { // Browser
-    factory(window);
+    window.velm = factory(window);
   }
-})(function(window, property) {
-  var property = property || 'bind';
+})(function(window) {
   var rclass = /^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/;
   var rattrib = /^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/;
   var document = window.document;
+
+  var velm = init;
+
+  velm.or = function(stateFx, stateFx2) {
+    return function() { stateFx() || stateFx2(); }
+  };
+
+  velm.and = function(stateFx, stateFx2) {
+    return function() { stateFx() && stateFx2(); }
+  };
+
+  velm.gt = function(stateFx, num) {
+    return function() { stateFx() > num; }
+  };
+
+  velm.gte = function(stateFx, num) {
+    return function() { stateFx() >= num; }
+  };
+
+  velm.lt = function(stateFx, num) {
+    return function() { stateFx() < num; }
+  };
+
+  velm.lte = function(stateFx, num) {
+    return function() { stateFx() <= num; }
+  };
+
+  velm.eq = function(num) {
+    return function() { binding() == num; }
+  };
+
+  return velm;
 
   function truthy(str) {
     if (str == null) return false;
@@ -137,199 +170,25 @@
     }
   }
 
-  function attachBindToElementPrototype(element, property) {
+  function init(el) {
 
-    Object.defineProperty(element.prototype, property, { get: getBind, enumerable: true});
+    var opts = [];
 
-    function getBind() {
+    if (typeof(el) == 'string')
+      el = document.querySelector(el);
 
-      var opts = [];
+    if (el == null) {
+      throw new Error('Element ' + el + ' not found.');
+    }
 
-      function addOptions() {
-        var args = Array.prototype.slice.call(arguments);
-        opts = opts.concat(args);
+    if (!(el instanceof HTMLElement)) {
+      throw new Error('Element ' + el + ' is not a HTMLElement');
+    }
 
-        return { to: createBinding.bind(this) };
-      }
+    return initElement(el);
 
-      function createBinding(obj, prop) {
-        var el = this;
-        var getter, setter;
-
-        if (!(el instanceof HTMLElement)) {
-          throw new Error('Element ' + el + ' is not a HTMLElement');
-        }
-
-/*
-        if (obj.hasOwnProperty(prop)) {
-          throw new Error('Object ' + obj + ' already has property ' + prop);
-        }
-*/
-
-        switch (opts[0]) {
-          case 'text':
-            getter = function() {
-              return el.textContent || el.innerText;
-            };
-            setter = function(text) {
-              el.innerText = text;
-            };
-            break;
-          case 'html':
-            getter = function() {
-              return el.innerHTML;
-            };
-            setter = function(html) {
-              el.innerHTML = html;
-            }
-            break;
-          case 'classList':
-            getter = function() {
-              return classList(el);
-            }
-            setter = function(arr) {
-              classList(el, arr);
-            }
-            break;
-          case 'hasClass':
-            getter = function() {
-              return hasClass(el, opts[1]);
-            };
-            setter = function(boolean) {
-              if (boolean) {
-                addClass(el, opts[1]);
-              } else {
-                removeClass(el, opts[1]);
-              }
-
-            }
-            break;
-          case 'noClass':
-            getter = function() {
-              return !hasClass(el, opts[1]);
-            };
-            setter = function(boolean) {
-              if (!boolean) {
-                addClass(el, opts[1]);
-              } else {
-                removeClass(el, opts[1]);
-              }
-            }
-            break;
-          case 'attr':
-            getter = function() {
-              return el.getAttribute(opts[1]);
-            };
-            setter = function(val) {
-              el.setAttribute(opts[1], Object(val).toString());
-            };
-            break;
-          case 'hasTruthyAttr':
-            getter = function() {
-              return truthy(el.getAttribute(opts[1]));
-            };
-            setter = function(val) {
-              if (val == null) {
-                el.removeAttribute(opts[1]);
-              } else {
-                el.setAttribute(opts[1], Object(val).toString());
-              }
-            };
-            break;
-          case 'noTruthyAttr':
-            getter = function() {
-              return !truthy(el.getAttribute(opts[1]));
-            };
-            setter = function(boolean) {
-              var val = !boolean? 'true' : 'false';
-              el.setAttribute(opts[1], val);
-            };
-            break;
-          case 'textValue':
-            getter = function() {
-              return el.value;
-            };
-            setter = function(text) {
-              el.value = text;
-            };
-            break;
-          case 'selectValue':
-            getter = function() {
-              return el.value;
-            };
-            setter = function(text) {
-
-              el.value = text;
-            };
-            break;
-          case 'groupValue':
-            getter = function() {
-              var name = el.name;
-              var group = document.getElementsByName(name);
-
-              for (var i=0; i < group.length; i++) {
-                var elradio = group[i];
-
-                if (!(elradio instanceof HTMLInputElement)) continue;
-                if (!(elradio.type == 'radio')) continue;
-
-                if (elradio.checked) {
-                  return elradio.value;
-                }
-              }
-
-              return null;
-            }
-            setter = function(value) {
-              var name = el.name;
-              var group = document.getElementsByName(name);
-              var found = false;
-
-              for (var i=0; i < group.length; i++) {
-                var elradio = group[i];
-
-                if (!(elradio instanceof HTMLInputElement)) continue;
-                if (!(elradio.type == 'radio')) continue;
-
-                if (elradio.value == value) {
-                  elradio.checked = true;
-                  found = true;
-                } else {
-                  elradio.checked = false;
-                }
-              }
-
-              if (value != null && !found)
-                throw new Error('Failed to set value ' + ((typeof(value) == 'string')? "'" + value + "'" : value) + ' for radio group ' + name);
-            }
-            break;
-          case 'checked':
-            getter = function() {
-              return el.checked;
-            }
-            setter = function(boolean) {
-              el.checked = boolean;
-            }
-            break;
-          default:
-            getter = function() {
-              throw new Error('Option ' + opts[0] + ' does not exist');
-            }
-            setter = function() {
-              throw new Error('Option ' + opts[0] + ' does not exist');
-            }
-        }
-
-        Object.defineProperty(obj, prop, {
-          get: getter,
-          set: setter,
-          enumerable: true,
-          configurable: true
-        });
-      }
-
-      var el = this;
-      var bind = {
+    function initElement(el) {
+      var binder = {
         hasClass: function(className) {
           checkClassName(className);
           return (addOptions.bind(el, 'hasClass'))(className);
@@ -352,72 +211,243 @@
         }
       };
 
-      Object.defineProperty(bind, 'classList', {
+      Object.defineProperty(binder, 'classList', {
         get: addOptions.bind(el, 'classList'),
         enumerable: true
       });
 
-      Object.defineProperty(bind, 'text', {
+      Object.defineProperty(binder, 'text', {
         get: addOptions.bind(el, 'text'),
         enumerable: true
       })
 
-      Object.defineProperty(bind, 'html', {
+      Object.defineProperty(binder, 'html', {
         get: addOptions.bind(el, 'html'),
         enumerable: true
       })
 
-      if (element == HTMLSelectElement) {
-        Object.defineProperty(bind, 'selectValue', {
+      if (el instanceof HTMLSelectElement) {
+        Object.defineProperty(binder, 'selectValue', {
           get: addOptions.bind(el, 'selectValue'),
           enumerable: true
         })
-      } else if (element == HTMLInputElement) {
+      } else if (el instanceof HTMLInputElement) {
         switch (el.type) {
           case 'password':
           case 'text':
-            Object.defineProperty(bind, 'textValue', {
+            Object.defineProperty(binder, 'textValue', {
               get: addOptions.bind(el, 'textValue'),
               enumerable: true
             });
             break;
           case 'radio':
-            Object.defineProperty(bind, 'groupValue', {
+            Object.defineProperty(binder, 'groupValue', {
               get: addOptions.bind(el, 'groupValue'),
               enumerable: true
             });
             break;
           case 'checkbox':
-            Object.defineProperty(bind, 'checked', {
+            Object.defineProperty(binder, 'checked', {
               get:  addOptions.bind(el, 'checked'),
               enumerable: true
             });
             break;
         }
-      } else if (element == HTMLTextAreaElement) {
-        Object.defineProperty(bind, 'textValue', {
+      } else if (el instanceof HTMLTextAreaElement) {
+        Object.defineProperty(binder, 'textValue', {
           get: addOptions.bind(el, 'textValue'),
           enumerable: true
         });
       }
 
-      return bind;
+      return binder;
+    }
+
+    function addOptions() {
+      var args = Array.prototype.slice.call(arguments);
+      opts = opts.concat(args);
+
+      return { to: createBinding.bind(this) };
+    }
+
+    function createBinding(obj, prop) {
+      var el = this;
+      var getter, setter, binding;
+
+      switch (opts[0]) {
+        case 'text':
+          getter = function() {
+            return el.textContent || el.innerText;
+          };
+          setter = function(text) {
+            el.innerText = text;
+          };
+          break;
+        case 'html':
+          getter = function() {
+            return el.innerHTML;
+          };
+          setter = function(html) {
+            el.innerHTML = html;
+          }
+          break;
+        case 'classList':
+          getter = function() {
+            return classList(el);
+          }
+          setter = function(arr) {
+            classList(el, arr);
+          }
+          break;
+        case 'hasClass':
+          getter = function() {
+            return hasClass(el, opts[1]);
+          };
+          setter = function(boolean) {
+            if (boolean) {
+              addClass(el, opts[1]);
+            } else {
+              removeClass(el, opts[1]);
+            }
+          }
+          break;
+        case 'noClass':
+          getter = function() {
+            return !hasClass(el, opts[1]);
+          };
+          setter = function(boolean) {
+            if (!boolean) {
+              addClass(el, opts[1]);
+            } else {
+              removeClass(el, opts[1]);
+            }
+          }
+          break;
+        case 'attr':
+          getter = function() {
+            return el.getAttribute(opts[1]);
+          };
+          setter = function(val) {
+            el.setAttribute(opts[1], Object(val).toString());
+          };
+          break;
+        case 'hasTruthyAttr':
+          getter = function() {
+            return truthy(el.getAttribute(opts[1]));
+          };
+          setter = function(val) {
+            if (val == null) {
+              el.removeAttribute(opts[1]);
+            } else {
+              el.setAttribute(opts[1], Object(val).toString());
+            }
+          };
+          break;
+        case 'noTruthyAttr':
+          getter = function() {
+            return !truthy(el.getAttribute(opts[1]));
+          };
+          setter = function(boolean) {
+            var val = !boolean? 'true' : 'false';
+            el.setAttribute(opts[1], val);
+          };
+          break;
+        case 'textValue':
+          getter = function() {
+            return el.value;
+          };
+          setter = function(text) {
+            el.value = text;
+          };
+          break;
+        case 'selectValue':
+          getter = function() {
+            return el.value;
+          };
+          setter = function(text) {
+
+            el.value = text;
+          };
+          break;
+        case 'groupValue':
+          getter = function() {
+            var name = el.name;
+            var group = document.getElementsByName(name);
+
+            for (var i=0; i < group.length; i++) {
+              var elradio = group[i];
+
+              if (!(elradio instanceof HTMLInputElement)) continue;
+              if (!(elradio.type == 'radio')) continue;
+
+              if (elradio.checked) {
+                return elradio.value;
+              }
+            }
+
+            return null;
+          }
+          setter = function(value) {
+            var name = el.name;
+            var group = document.getElementsByName(name);
+            var found = false;
+
+            for (var i=0; i < group.length; i++) {
+              var elradio = group[i];
+
+              if (!(elradio instanceof HTMLInputElement)) continue;
+              if (!(elradio.type == 'radio')) continue;
+
+              if (elradio.value == value) {
+                elradio.checked = true;
+                found = true;
+              } else {
+                elradio.checked = false;
+              }
+            }
+
+            if (value != null && !found)
+              throw new Error('Failed to set value ' + ((typeof(value) == 'string')? "'" + value + "'" : value) + ' for radio group ' + name);
+          }
+          break;
+        case 'checked':
+          getter = function() {
+            return el.checked;
+          }
+          setter = function(boolean) {
+            el.checked = boolean;
+          }
+          break;
+        default:
+          getter = function() {
+            throw new Error('Option ' + opts[0] + ' does not exist');
+          }
+          setter = function() {
+            throw new Error('Option ' + opts[0] + ' does not exist');
+          }
+      }
+
+      Object.defineProperty(obj, prop, {
+        get: getter,
+        set: setter,
+        enumerable: true,
+        configurable: true
+      });
+
+      stateFx = function() { return getter(); }
+
+      Object.defineProperty(stateFx, 'value', {
+        get: getter,
+        or: velm.or.bind(undefined, stateFx),
+        and: velm.and.bind(undefined, stateFx),
+        gt: velm.gt.bind(undefined, stateFx),
+        gte: velm.gte.bind(undefined, stateFx),
+        lt: velm.lt.bind(undefined, stateFx),
+        lte: velm.lte.bind(undefined, stateFx),
+        eq: velm.eq.bind(undefined, stateFx)
+      })
+
+      return stateFx;
     }
   }
-
-  var ctors = ['HTMLElement', 'HTMLInputElement', 'HTMLSelectElement', 'HTMLTextAreaElement'];
-
-  ctors.map(function(ctor) {
-    if (!window.hasOwnProperty(ctor)) {
-      throw new Error(ctor + ' not found.');
-    }
-
-    attachBindToElementPrototype(window[ctor], property);
-  });
-
-  var HTMLElement = window.HTMLElement;
-  var HTMLInputElement = window.HTMLInputElement;
-  var HTMLSelectElement = window.HTMLSelectElement;
-  var HTMLTextAreaElement = window.HTMLTextAreaElement;
-
 });

@@ -23,7 +23,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  *
  */
- 
+
 (function(factory) {
 
   if (typeof module !== 'undefined' && module && module.exports) { // Node.js & CommonJS
@@ -50,7 +50,9 @@
 })(function(QUnit, window) {
 
   var document = window.document;
+  var velm = window.velm;
   var HTMLElement = window.HTMLElement;
+
 
 
     function regExp(className) {
@@ -59,6 +61,9 @@
 
 
     function hasClass(el, className) {
+      if (typeof(el) == 'string')
+        el = document.querySelector(el);
+
       if (el.classList) {
         return el.classList.contains(className);
       } else if (el.className) {
@@ -69,6 +74,9 @@
     }
 
     function addClass(el, className) {
+      if (typeof(el) == 'string')
+        el = document.querySelector(el);
+
       if (hasClass(el, className)) return;
 
       if (el.classList) {
@@ -81,6 +89,9 @@
     }
 
     function removeClass(el, className) {
+      if (typeof(el) == 'string')
+        el = document.querySelector(el);
+
       if (!hasClass(el, className)) return;
 
       if (el.classList) {
@@ -93,6 +104,9 @@
     }
 
     function classList(el, arr) {
+      if (typeof(el) == 'string')
+        el = document.querySelector(el);
+
       if (arr && el.classList) { /*  New Setter */
         var last = el.classList.length - 1;
         for (var i=last; i >= 0; i--) {
@@ -138,16 +152,17 @@
     return true;
   }
 
-  QUnit.test('.bind', function(assert) {
-    assert.ok(document.querySelector('div.fixture.text').bind != null, '.bind function exists');
+  QUnit.test('velm', function(assert) {
+    assert.ok(velm != null, 'velm constructor exists');
+    assert.ok(velm('div.fixture.text') != null, 'velm constructor accepts selector string');
+    assert.ok(velm(document.querySelector('div.fixture.text')) != null, 'velm constructor accepts element');
   });
 
 
   QUnit.test('.text', function(assert) {
     var ui = {};
-    var div = document.querySelector('div.fixture.text');
 
-    div.bind
+    velm('div.fixture.text')
       .text
       .to(ui, 'div');
 
@@ -160,9 +175,8 @@
 
   QUnit.test('.html', function(assert) {
     var ui = {};
-    var div = document.querySelector('div.fixture.html');
 
-    div.bind
+    velm('div.fixture.html')
       .html
       .to(ui, 'html');
 
@@ -175,9 +189,8 @@
 
   QUnit.test('.classList', function(assert) {
     var ui = {};
-    var div = document.querySelector('div.fixture.clist');
 
-    div.bind
+    velm('div.fixture.clist')
       .classList
       .to(ui, 'classList');
 
@@ -189,9 +202,9 @@
 
   QUnit.test('.hasClass', function(assert) {
     var ui = {};
-    var div = document.querySelector('div.fixture.class');
 
-    div.bind
+    var div = document.querySelector('div.fixture.class');
+    velm(div)
       .hasClass('on')
       .to(ui, 'on');
 
@@ -214,7 +227,7 @@
     var ui = {};
     var div = document.querySelector('div.fixture.class');
 
-    div.bind
+    velm(div)
       .noClass('off')
       .to(ui, 'on');
 
@@ -236,7 +249,7 @@
     var ui = {};
     var div = document.querySelector('div.fixture.attr');
 
-    div.bind
+    velm(div)
       .attr('data-color')
       .to(ui, 'color');
 
@@ -252,7 +265,7 @@
     var ui = {};
     var div = document.querySelector('div.fixture.hattr');
 
-    div.bind
+    velm(div)
       .hasTruthyAttr('data-display')
       .to(ui, 'display');
 
@@ -293,7 +306,7 @@
     var ui = {};
     var div = document.querySelector('div.fixture.nattr');
 
-    div.bind
+    velm(div)
       .noTruthyAttr('data-display')
       .to(ui, 'display');
 
@@ -336,7 +349,7 @@
 
     for (var i=0; i < fixtures.length; i++) {
       var input = document.querySelector(fixtures[i]);
-      input.bind
+      velm(input)
         .textValue
         .to(ui, 'text');
 
@@ -353,7 +366,7 @@
     var inputA = document.querySelector('input.fixture[type="radio"][value="A"]');
     var inputB = document.querySelector('input.fixture[type="radio"][value="B"]');
 
-    inputA.bind
+    velm(inputA)
       .groupValue
       .to(ui, 'choice');
 
@@ -372,7 +385,7 @@
     var ui = {};
     var select = document.querySelector('select.fixture')
 
-    select.bind
+    velm(select)
       .selectValue
       .to(ui, 'selection');
 
