@@ -30,7 +30,7 @@
       return factory(window);
     }
   } else if (typeof define === 'function' && define.amd) { // Require.js & AMD
-    define('velm', [], function(jquery, afnum) {
+    define('velm', [], function() {
       window.velm = factory(window);
       return window.velm;
     });
@@ -46,37 +46,7 @@
   var HTMLTextAreaElement = window.HTMLTextAreaElement;
   var HTMLInputElement = window.HTMLInputElement;
 
-  var velm = init;
-
-  velm.or = function(stateFx, stateFx2) {
-    return function() { stateFx() || stateFx2(); }
-  };
-
-  velm.and = function(stateFx, stateFx2) {
-    return function() { stateFx() && stateFx2(); }
-  };
-
-  velm.gt = function(stateFx, num) {
-    return function() { stateFx() > num; }
-  };
-
-  velm.gte = function(stateFx, num) {
-    return function() { stateFx() >= num; }
-  };
-
-  velm.lt = function(stateFx, num) {
-    return function() { stateFx() < num; }
-  };
-
-  velm.lte = function(stateFx, num) {
-    return function() { stateFx() <= num; }
-  };
-
-  velm.eq = function(num) {
-    return function() { binding() == num; }
-  };
-
-  return velm;
+  return init;
 
   function truthy(str) {
     if (str == null) return false;
@@ -178,8 +148,9 @@
 
     var opts = [];
 
-    if (typeof(el) == 'string')
+    if (typeof(el) == 'string') {
       el = document.querySelector(el);
+    }
 
     if (el == null) {
       throw new Error('Element ' + el + ' not found.');
@@ -276,7 +247,7 @@
 
     function createBinding(obj, prop) {
       var el = this;
-      var getter, setter, binding;
+      var getter, setter, cbChange;
 
       switch (opts[0]) {
         case 'text':
@@ -433,25 +404,24 @@
 
       Object.defineProperty(obj, prop, {
         get: getter,
-        set: setter,
+        set: function(val) {
+          setter(val);
+          if (cbChange != null) {
+            cbChange(val);
+          }
+        },
         enumerable: true,
         configurable: true
       });
 
-      stateFx = function() { return getter(); }
-
-      Object.defineProperty(stateFx, 'value', {
-        get: getter,
-        or: velm.or.bind(undefined, stateFx),
-        and: velm.and.bind(undefined, stateFx),
-        gt: velm.gt.bind(undefined, stateFx),
-        gte: velm.gte.bind(undefined, stateFx),
-        lt: velm.lt.bind(undefined, stateFx),
-        lte: velm.lte.bind(undefined, stateFx),
-        eq: velm.eq.bind(undefined, stateFx)
-      })
-
-      return stateFx;
+      return {
+        change: function(cb) {
+          cbChange = cb;
+        }
+      };
     }
   }
+
+
+
 });
