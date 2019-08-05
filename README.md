@@ -51,7 +51,7 @@ ui.alert = '<b>Hello world!</b>'
 console.log(ui.alert);
 ```
 
-**.bind.html** can provide an easy way to inject HTML into your page. For this reason, it's use should be both encouraged and discouraged. Be careful, when using this method with request or user-provided data. **bind.html** provides easy access to html, but this can also mean easier access for hackers to inject abritrary scripts.
+**.bind.html** can provide an easy way to inject HTML into your page. For this reason, it's use should be both encouraged and discouraged. Be careful, when using this method with request or user-provided data. **bind.html** provides easy access to html, but this can also mean easier access for hackers to inject arbitrary scripts.
 
 
 
